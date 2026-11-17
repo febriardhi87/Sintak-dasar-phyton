@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SDLC – Proses Bisnis Menyeluruh PPLG</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf6ee;--bg2:#f0e8d6;--card:#fffdf8;--text:#1d1a14;--muted:#6b624f;--gold:#9a7416;--gold2:#c9a24a;--line:rgba(154,116,22,.28);--ok:#2f7d4f;--bad:#b23a3a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f1a;--bg2:#141a2b;--card:#10162400;--text:#f3ecda;--muted:#a59f8e;--gold:#d9b45a;--gold2:#f1d48a;--line:rgba(217,180,90,.3);--ok:#6fcf97;--bad:#ef8585;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b0f1a;--bg2:#141a2b;--card:#10162400;--text:#f3ecda;--muted:#a59f8e;--gold:#d9b45a;--gold2:#f1d48a;--line:rgba(217,180,90,.3);--ok:#6fcf97;--bad:#ef8585;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;height:100%;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 80% -10%,var(--bg2),transparent),var(--bg);color:var(--text);font:400 clamp(15px,1.6vw,18px)/1.6 Inter,system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+h1,h2,h3{font-family:"Playfair Display",Georgia,serif;margin:0;line-height:1.2}
+h2{font-size:clamp(26px,4vw,44px);color:var(--gold)}
+h2::after{content:"";display:block;width:72px;height:2px;background:linear-gradient(90deg,var(--gold2),transparent);margin:12px 0 0}
+.bar{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:3px;z-index:9;background:var(--line)}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s}
+.top{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:14px;z-index:9;display:flex;gap:8px}
+.top button,.nav button{font:inherit;cursor:pointer;color:var(--gold);background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 14px;transition:.2s}
+.top button:hover,.nav button:hover:not(:disabled){background:var(--gold);color:var(--bg)}
+.nav button:disabled{opacity:.35;cursor:default}
+#deck{position:relative;height:100%}
+.slide{position:absolute;inset:0;overflow-y:auto;padding:64px clamp(18px,6vw,96px) 96px;opacity:0;visibility:hidden;transform:translateX(40px);transition:opacity .5s,transform .5s,visibility .5s}
+.slide.on{opacity:1;visibility:visible;transform:none}
+.slide.prev{transform:translateX(-40px)}
+.wrap{max-width:1040px;margin:0 auto}
+.eyebrow{letter-spacing:.3em;text-transform:uppercase;font-size:.72em;color:var(--gold);margin-bottom:10px}
+.hero{min-height:100%;display:flex;flex-direction:column;justify-content:center;text-align:left}
+.hero h1{font-size:clamp(34px,7vw,76px);background:linear-gradient(120deg,var(--gold),var(--gold2),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:560px;color:var(--muted)}
+.orn{width:90px;height:1px;background:var(--gold2);margin:22px 0}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));margin-top:26px}
+.card{background:linear-gradient(145deg,var(--bg2),transparent);border:1px solid var(--line);border-radius:16px;padding:18px 20px;transition:.25s}
+button.card{font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%}
+button.card:hover,.card.sel{border-color:var(--gold2);transform:translateY(-3px);box-shadow:0 10px 30px -14px var(--gold)}
+.num{font-family:"Playfair Display",serif;font-size:1.8em;color:var(--gold)}
+.card small{display:block;color:var(--muted);margin-top:6px;max-height:0;overflow:hidden;opacity:0;transition:.35s}
+.card.sel small{max-height:200px;opacity:1}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 16px}
+.tabs button{font:inherit;cursor:pointer;color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:8px 18px}
+.tabs button.on{color:var(--bg);background:linear-gradient(120deg,var(--gold),var(--gold2));border-color:transparent;font-weight:600}
+.panel{border:1px solid var(--line);border-radius:18px;padding:22px;background:linear-gradient(145deg,var(--bg2),transparent)}
+.panel .cols{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));margin-top:14px}
+.tag{font-size:.72em;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.scroll{overflow-x:auto;margin-top:22px;border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.92em}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--gold);font-family:"Playfair Display",serif}tr:last-child td{border:0}
+td:first-child{color:var(--gold2);font-weight:600}
+.opts{display:grid;gap:10px;margin-top:16px}
+.opt{font:inherit;color:var(--text);text-align:left;cursor:pointer;background:none;border:1px solid var(--line);border-radius:12px;padding:12px 16px;transition:.2s}
+.opt:hover{border-color:var(--gold2)}
+.opt.right{border-color:var(--ok);background:rgba(47,125,79,.14)}.opt.wrong{border-color:var(--bad);background:rgba(178,58,58,.14)}
+.result{margin-top:18px;padding:16px 20px;border-left:3px solid var(--gold2);background:var(--bg2);border-radius:0 12px 12px 0;min-height:60px}
+.steps{display:flex;gap:6px;margin:22px 0 14px;overflow-x:auto;padding-bottom:6px}
+.steps button{flex:1;min-width:92px;font:inherit;font-size:.82em;cursor:pointer;color:var(--muted);background:none;border:0;border-top:3px solid var(--line);padding:10px 4px;text-align:left}
+.steps button.on{color:var(--gold);border-color:var(--gold2)}
+ul{padding-left:1.2em;margin:8px 0}li{margin:4px 0}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:9;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,var(--bg) 55%)}
+.dots{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line);cursor:pointer;transition:.3s}
+.dots i.on{background:var(--gold2);transform:scale(1.4)}
+@media(max-width:560px){.dots{display:none}.nav{justify-content:space-between}.slide{padding-top:56px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="bar"><i id="pg"></i></div>
+<div class="top"><button id="th" aria-label="Ganti tema">◐ Tema</button></div>
+<main id="deck"></main>
+<div class="nav"><button id="pv">← Sebelumnya</button><div class="dots" id="dots"></div><button id="nx">Lanjut →</button></div>
+
+<script>
+const S=[];
+const add=(h)=>S.push(h);
+
+add(`<div class="wrap hero"><div class="eyebrow">Proses Bisnis Menyeluruh · PPLG</div><h1>Software Development Life Cycle</h1><div class="orn"></div><p>Memahami tahapan dan model pengembangan perangkat lunak: Waterfall, Agile, Prototype, dan Iterative.</p><p style="margin-top:28px;font-size:.85em">Gunakan tombol panah, geser layar, atau klik untuk berinteraksi.</p></div>`);
+
+add(`<div class="wrap"><div class="eyebrow">Bagian 1</div><h2>Apa itu SDLC?</h2>
+<p style="max-width:760px;margin-top:22px">SDLC adalah kerangka kerja yang menjelaskan tahapan terstruktur dalam membuat perangkat lunak, dari ide sampai software dipakai dan dirawat.</p>
+<div class="grid"><div class="card"><div class="num">01</div><b>Terencana</b><br><span style="color:var(--muted)">Proyek berjalan sesuai rencana dan jadwal.</span></div><div class="card"><div class="num">02</div><b>Berkualitas</b><br><span style="color:var(--muted)">Kualitas terjaga lewat pengujian bertahap.</span></div><div class="card"><div class="num">03</div><b>Terkendali</b><br><span style="color:var(--muted)">Biaya dan waktu mudah dikontrol.</span></div><div class="card"><div class="num">04</div><b>Sesuai kebutuhan</b><br><span style="color:var(--muted)">Hasil akhir cocok untuk pengguna.</span></div></div></div>`);
+
+const ST=[["Perencanaan","Menentukan tujuan, ruang lingkup, anggaran, jadwal, dan tim."],["Analisis Kebutuhan","Mengumpulkan kebutuhan fungsional dan non-fungsional, hasilnya dokumen SRS."],["Desain","Merancang arsitektur, database (ERD), alur (DFD, flowchart), dan UI/UX."],["Implementasi","Menulis kode program sesuai desain yang disepakati."],["Pengujian","Unit test, integration test, dan UAT agar software sesuai kebutuhan."],["Deployment","Merilis software ke lingkungan produksi agar dipakai pengguna."],["Pemeliharaan","Memperbaiki bug, memperbarui fitur, dan menjaga performa."]];
+add(`<div class="wrap"><div class="eyebrow">Bagian 2 · Klik kartu</div><h2>7 Tahapan SDLC</h2><div class="grid" id="stages">${ST.map((s,i)=>`<button class="card" data-i="${i}"><div class="num">0${i+1}</div><b>${s[0]}</b><small>${s[1]}</small></button>`).join("")}</div></div>`);
+
+const M={Waterfall:["Tahapan berjalan berurutan dari atas ke bawah; tahap berikutnya dimulai setelah tahap sebelumnya selesai.","Sederhana, dokumentasi lengkap, mudah dikelola.","Kaku, sulit mengubah kebutuhan, produk baru terlihat di akhir.","Kebutuhan jelas dan stabil, misalnya sistem pemerintahan atau aplikasi administrasi."],
+Agile:["Pengembangan bertahap dalam siklus pendek (sprint 1–4 minggu) dengan kolaborasi erat bersama klien. Kerangka: Scrum dan Kanban.","Fleksibel terhadap perubahan, hasil cepat terlihat, umpan balik rutin.","Dokumentasi minim, butuh komunikasi intens, lingkup bisa melebar.","Kebutuhan sering berubah: aplikasi mobile, startup, web app."],
+Prototype:["Model awal dibuat dahulu untuk didemonstrasikan, diperbaiki berdasarkan masukan, lalu dikembangkan menjadi produk akhir.","Kebutuhan pengguna lebih jelas, mengurangi salah paham.","Prototipe disangka produk jadi, berpotensi menambah waktu dan biaya.","Kebutuhan belum jelas atau menekankan tampilan antarmuka."],
+Iterative:["Software dikembangkan lewat pengulangan siklus; tiap iterasi menghasilkan versi yang lebih baik.","Kesalahan terdeteksi lebih awal, produk berkembang bertahap.","Butuh arsitektur yang direncanakan baik, bisa memakan sumber daya lebih banyak.","Produk yang dirilis bertahap dan disempurnakan berkala."],
+Lainnya:["Spiral: iterasi + analisis risiko tiap putaran. V-Model: setiap tahap pengembangan punya pasangan pengujian. RAD: pengembangan cepat dengan prototipe dan komponen siap pakai. DevOps: integrasi pengembangan dan operasional dengan otomatisasi (CI/CD).","Beragam, sesuai karakter proyek.","Perlu pemahaman lebih dalam.","Proyek berisiko tinggi (Spiral), butuh rilis cepat (RAD, DevOps)."]};
+add(`<div class="wrap"><div class="eyebrow">Bagian 3 · Pilih tab</div><h2>Model-Model SDLC</h2><div class="tabs" id="tabs">${Object.keys(M).map((k,i)=>`<button data-k="${k}" class="${i?'':'on'}">${k}</button>`).join("")}</div><div class="panel" id="mp"></div></div>`);
+
+add(`<div class="wrap"><div class="eyebrow">Bagian 4</div><h2>Tabel Perbandingan</h2><div class="scroll"><table><tr><th>Aspek</th><th>Waterfall</th><th>Agile</th><th>Prototype</th><th>Iterative</th></tr>
+<tr><td>Alur</td><td>Linear berurutan</td><td>Sprint berulang</td><td>Prototipe → revisi → final</td><td>Siklus berulang</td></tr>
+<tr><td>Fleksibilitas</td><td>Rendah</td><td>Tinggi</td><td>Sedang–tinggi</td><td>Sedang–tinggi</td></tr>
+<tr><td>Keterlibatan klien</td><td>Awal dan akhir</td><td>Sepanjang proyek</td><td>Saat evaluasi</td><td>Tiap iterasi</td></tr>
+<tr><td>Dokumentasi</td><td>Sangat lengkap</td><td>Secukupnya</td><td>Sedang</td><td>Sedang</td></tr>
+<tr><td>Risiko perubahan</td><td>Tinggi</td><td>Rendah</td><td>Rendah</td><td>Rendah</td></tr></table></div></div>`);
+
+const CH=[["Kebutuhan jelas dan tetap","Waterfall","Alur berurutan dan dokumentasi lengkap cocok untuk kebutuhan yang stabil."],["Kebutuhan sering berubah, ingin hasil cepat","Agile","Sprint pendek memungkinkan perubahan dan umpan balik rutin."],["Kebutuhan belum jelas, perlu validasi tampilan","Prototype","Klien melihat model awal sehingga salah paham berkurang."],["Produk dirilis bertahap","Iterative","Setiap siklus menghasilkan versi yang lebih baik."],["Proyek berisiko tinggi","Spiral","Analisis risiko dilakukan di setiap putaran."]];
+add(`<div class="wrap"><div class="eyebrow">Bagian 5 · Interaktif</div><h2>Pilih Model yang Tepat</h2><p style="color:var(--muted)">Pilih kondisi proyek, lihat rekomendasinya.</p><div class="opts" id="ch">${CH.map((c,i)=>`<button class="opt" data-i="${i}">${c[0]}</button>`).join("")}</div><div class="result" id="chr">Rekomendasi akan muncul di sini.</div></div>`);
+
+const KS=[["Planning","Tujuan: mempercepat pemesanan makanan. Tim 4 orang, waktu 2 bulan."],["Analisis","Siswa melihat menu, memesan, membayar; penjual mengelola menu dan pesanan."],["Desain","ERD (siswa, menu, pesanan), wireframe halaman utama dan keranjang."],["Implementasi","Web dengan HTML/CSS/JS dan backend PHP atau Node.js."],["Testing","Mencoba semua fitur dan menguji dengan beberapa siswa."],["Deployment","Hosting aplikasi di server sekolah."],["Maintenance","Memperbaiki bug dan menambah fitur promo."]];
+add(`<div class="wrap"><div class="eyebrow">Bagian 6 · Studi kasus</div><h2>Aplikasi Kantin Sekolah Online</h2><div class="steps" id="ks">${KS.map((k,i)=>`<button class="${i?'':'on'}" data-i="${i}">${i+1}. ${k[0]}</button>`).join("")}</div><div class="panel" id="kp"></div></div>`);
+
+const Q=[["Model SDLC mana yang tahapannya berurutan dan kaku?",["Agile","Waterfall","Prototype"],1],["Kebutuhan sering berubah dan hasil harus cepat terlihat. Model terbaik?",["Waterfall","Agile","V-Model"],1],["Tahap yang memastikan software bebas bug adalah...",["Desain","Deployment","Pengujian"],2],["Model yang membuat contoh awal untuk dievaluasi pengguna?",["Prototype","Waterfall","Iterative"],0]];
+add(`<div class="wrap"><div class="eyebrow">Bagian 7 · Kuis</div><h2>Uji Pemahamanmu</h2><div id="qz"></div></div>`);
+
+add(`<div class="wrap"><div class="eyebrow">Penutup</div><h2>Rangkuman & Latihan</h2><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))"><div class="card"><h3>Rangkuman</h3><ul><li>SDLC adalah panduan terstruktur membuat software.</li><li>7 tahap: perencanaan hingga pemeliharaan.</li><li>Model utama: Waterfall, Agile, Prototype, Iterative.</li><li>Pilih model sesuai kejelasan kebutuhan, risiko, waktu, dan keterlibatan klien.</li></ul></div><div class="card"><h3>Latihan</h3><ul><li>Jelaskan pengertian dan tujuan SDLC.</li><li>Apa beda utama Waterfall dan Agile?</li><li>Mengapa Prototype cocok untuk klien yang belum yakin?</li><li>Studi kasus: pilih model SDLC untuk aplikasi perpustakaan digital sekolah dan uraikan tahapannya.</li></ul></div></div></div>`);
+
+const deck=document.getElementById("deck"),dots=document.getElementById("dots");
+S.forEach((h,i)=>{const s=document.createElement("section");s.className="slide";s.innerHTML=h;deck.appendChild(s);const d=document.createElement("i");d.onclick=()=>go(i);dots.appendChild(d)});
+let cur=0;const sl=[...deck.children],dt=[...dots.children];
+function go(n){cur=Math.max(0,Math.min(S.length-1,n));sl.forEach((s,i)=>{s.classList.toggle("on",i===cur);s.classList.toggle("prev",i<cur);if(i===cur)s.scrollTop=0});dt.forEach((d,i)=>d.classList.toggle("on",i===cur));pg.style.width=((cur+1)/S.length*100)+"%";pv.disabled=cur===0;nx.disabled=cur===S.length-1}
+pv.onclick=()=>go(cur-1);nx.onclick=()=>go(cur+1);
+addEventListener("keydown",e=>{if(["ArrowRight","PageDown"].includes(e.key))go(cur+1);if(["ArrowLeft","PageUp"].includes(e.key))go(cur-1)});
+let x0=null;deck.addEventListener("touchstart",e=>x0=e.touches[0].clientX,{passive:true});deck.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>70)go(cur+(dx<0?1:-1));x0=null});
+
+document.querySelectorAll("#stages .card").forEach(c=>c.onclick=()=>c.classList.toggle("sel"));
+const mp=document.getElementById("mp");
+function showM(k){const m=M[k];mp.innerHTML=`<h3>${k}</h3><p>${m[0]}</p><div class="cols"><div><div class="tag ok">Kelebihan</div>${m[1]}</div><div><div class="tag bad">Kekurangan</div>${m[2]}</div><div><div class="tag">Cocok untuk</div>${m[3]}</div></div>`}
+showM("Waterfall");
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");showM(b.dataset.k)});
+document.querySelectorAll("#ch .opt").forEach(b=>b.onclick=()=>{const c=CH[b.dataset.i];document.querySelectorAll("#ch .opt").forEach(x=>x.classList.remove("right"));b.classList.add("right");chr.innerHTML=`<div class="tag">Rekomendasi</div><h3>${c[1]}</h3><p style="margin:6px 0 0">${c[2]}</p>`});
+const kp=document.getElementById("kp");
+function showK(i){kp.innerHTML=`<div class="tag">Tahap ${i+1} dari 7</div><h3>${KS[i][0]}</h3><p>${KS[i][1]}</p>`}
+showK(0);
+document.querySelectorAll("#ks button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#ks button").forEach(x=>x.classList.remove("on"));b.classList.add("on");showK(+b.dataset.i)});
+
+let qi=0,sc=0;const qz=document.getElementById("qz");
+function rq(){if(qi>=Q.length){qz.innerHTML=`<div class="result"><h3>Skor kamu: ${sc} / ${Q.length}</h3><p>${sc===Q.length?"Luar biasa, sempurna!":"Terus berlatih, ulangi untuk hasil lebih baik."}</p><button class="opt" id="rs" style="margin-top:8px">Ulangi kuis</button></div>`;rs.onclick=()=>{qi=0;sc=0;rq()};return}
+const q=Q[qi];qz.innerHTML=`<div class="tag" style="margin-top:20px">Soal ${qi+1} / ${Q.length}</div><h3 style="margin-top:8px">${q[0]}</h3><div class="opts">${q[1].map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join("")}</div><div class="result" id="qr">Pilih satu jawaban.</div>`;
+qz.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const ok=+b.dataset.i===q[2];qz.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(+x.dataset.i===q[2])x.classList.add("right")});if(!ok)b.classList.add("wrong");else sc++;qr.innerHTML=`<b class="${ok?'ok':'bad'}">${ok?'Benar!':'Kurang tepat.'}</b> <button class="opt" id="nq" style="margin-left:8px;padding:6px 14px">${qi===Q.length-1?'Lihat skor':'Soal berikutnya'}</button>`;nq.onclick=()=>{qi++;rq()}})}
+rq();
+
+const root=document.documentElement;th.onclick=()=>{const dark=root.dataset.theme?root.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;root.dataset.theme=dark?"light":"dark"};
+go(0);
+</script>
+</body>
+</html>
